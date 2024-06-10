@@ -34,7 +34,6 @@ from qgis.core import QgsApplication, QgsGeometry, QgsFeature, QgsField, QgsFiel
 from qgis.core import QgsVectorLayer, QgsWkbTypes, QgsMapLayer
 from PyQt5.QtCore import QVariant
 
-# This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'plugin12_14_dialog_base.ui'))
 
@@ -61,7 +60,7 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.area_unit = 'm2'
         
-    def show_preview(self):  # Dodaj metodę show_preview do klasy dialogowej
+    def show_preview(self): 
         with open(self.mQgsFileWidget.filePath()) as f:
             for i, line in enumerate(f.readlines()):
                 x_str, y_str = line.split()
@@ -71,17 +70,15 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
                 self.tableWidget.setItem(i, 1, QTableWidgetItem(y_str))
     
     def clear_console_and_selection(self, label=None):
-        # Wyczyść konsolę wynikową w QGIS
         iface.messageBar().clearWidgets()
         
-        # Wyczyść zawartość QLabel
         self.label_dh_result.setText("")
         self.label_area_result.setText("")
         self.tableWidget.clearContents()
         
         active_layer = iface.activeLayer()
         if active_layer:
-            layer_name = active_layer.name()  # Zapisz nazwę warstwy przed jej usunięciem
+            layer_name = active_layer.name() 
             if active_layer.type() == QgsMapLayer.VectorLayer and active_layer.geometryType() == QgsWkbTypes.PolygonGeometry:
                 QgsProject.instance().removeMapLayer(active_layer)
                 QgsMessageLog.logMessage('Warstwa {} została usunięta'.format(layer_name), level=Qgis.Success)
@@ -133,7 +130,6 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
             h_2 = float(features[1]['wysokosc'])
             dh = round(h_2 - h_1)
     
-            # Najpierw ustaw wartość dla label_dh_result
             self.label_dh_result.setText(f'{dh} m')
     
 
@@ -236,20 +232,17 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
             QgsMessageLog.logMessage(f'Pole powierzchni pomiędzy wybranymi punktami wynosi: {area} {self.area_unit}', level=Qgis.Success)
             iface.messageBar().pushMessage("Pole powierzchni", 'Pole powierzchni zostało obliczone', level=Qgis.Success)
             
-            # Draw a polygon based on the selected points
             points = [QgsPointXY(x, y) for x, y in zip(wsp_X, wsp_Y)]
             polygon_geometry = QgsGeometry.fromPolygonXY([points])
             polygon_feature = QgsFeature()
             polygon_feature.setGeometry(polygon_geometry)
             
-            # Create a new memory layer to add the polygon feature
             polygon_layer = QgsVectorLayer("Polygon?crs=epsg:2180", "Polygon", "memory")
             attributes = {'area': area}
             for i, attr in enumerate(attributes.keys()):
                 polygon_layer.dataProvider().addAttributes([QgsField(attr, QVariant.Double)])
             polygon_layer.updateFields()
             
-            # Start editing the layer to add the feature
             polygon_layer.startEditing()
             polygon_feature.setFields(polygon_layer.fields())
             polygon_feature.setAttribute('area', area)
@@ -257,6 +250,5 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
             polygon_layer.updateExtents()
             polygon_layer.commitChanges()
             
-            # Add the new layer to the map
             QgsProject.instance().addMapLayer(polygon_layer)
     
