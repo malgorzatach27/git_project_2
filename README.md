@@ -2,7 +2,7 @@
 SPOSÓB DZIAŁANIA:
 =========================================================
 
-1. W pierwszej kolejności należy sklonować repozytorium z github do folderu o przykładowej ścieżce "C:\Users\Administrator\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins" i pobraniu do niego komendą "git pull" folderu z zawartością wszystkich narzędzi do obsługi wtyczki
+1. W pierwszej kolejności należy sklonować repozytorium z github do folderu o przykładowej ścieżce "C:\Users\Administrator\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins" i pobrać do niego komendą "git pull" folder z zawartością wszystkich narzędzi do obsługi wtyczki
 2. Uruchomić program Qgis, następnie wejść w zakładkę ''Wtyczki'' na pasku narzędzi, następnie z rozwijalnego paska wybrać opcję ''Zarządzanie wtyczkami''.
 3. Na naszym ekranie powinno pojawić się okno, w którym po prawej stronie mamy zakładki do wyboru typu wtyczek, wybieramy: ''Zainstalowane'', gdzie powinny pojawić nam się wszystkie wtyczki zainstalowane w pamięci Qgis.
 4. Wybieramy wtyczkę o nazwie ''plugin 12-14'', zaznaczamy ją ptaszkiem i automatycznie powinna nam się pojawić na pasku narzędzi z prawej strony.
