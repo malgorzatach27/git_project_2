@@ -29,7 +29,10 @@ from qgis.PyQt import QtWidgets
 from qgis.core import QgsMessageLog, Qgis, QgsProject, QgsPointXY
 from qgis.utils import iface
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox
+from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox, QTableWidgetItem
+from qgis.core import QgsApplication, QgsGeometry, QgsFeature, QgsField, QgsFields
+from qgis.core import QgsVectorLayer, QgsWkbTypes, QgsMapLayer
+from PyQt5.QtCore import QVariant
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -48,36 +51,92 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.pushButton_dh.clicked.connect(self.calculate_dh)
         self.pushButton_area.clicked.connect(self.calculate_area)
+        self.pushButton_show_coords_preview.clicked.connect(self.show_preview)
+        self.pushButton_clear_console_and_selection.clicked.connect(self.clear_console_and_selection)
+        self.pushButton_draw_a_polygon.clicked.connect(self.draw_a_polygon)
+        
+        self.radioButton_m2.toggled.connect(self.update_area_unit)
+        self.radioButton_a.toggled.connect(self.update_area_unit)
+        self.radioButton_ha.toggled.connect(self.update_area_unit)
+
+        self.area_unit = 'm2'
+        
+    def show_preview(self):  # Dodaj metodę show_preview do klasy dialogowej
+        with open(self.mQgsFileWidget.filePath()) as f:
+            for i, line in enumerate(f.readlines()):
+                x_str, y_str = line.split()
+                self.tableWidget.insertRow(i)
+                self.tableWidget.setColumnCount(2)
+                self.tableWidget.setItem(i, 0, QTableWidgetItem(x_str))
+                self.tableWidget.setItem(i, 1, QTableWidgetItem(y_str))
     
+    def clear_console_and_selection(self, label=None):
+        # Wyczyść konsolę wynikową w QGIS
+        iface.messageBar().clearWidgets()
+        
+        # Wyczyść zawartość QLabel
+        self.label_dh_result.setText("")
+        self.label_area_result.setText("")
+        self.tableWidget.clearContents()
+        
+        active_layer = iface.activeLayer()
+        if active_layer:
+            layer_name = active_layer.name()  # Zapisz nazwę warstwy przed jej usunięciem
+            if active_layer.type() == QgsMapLayer.VectorLayer and active_layer.geometryType() == QgsWkbTypes.PolygonGeometry:
+                QgsProject.instance().removeMapLayer(active_layer)
+                QgsMessageLog.logMessage('Warstwa {} została usunięta'.format(layer_name), level=Qgis.Success)
+                iface.messageBar().pushMessage("Usunięto warstwę", 'Warstwa {} została usunięta'.format(layer_name), level=Qgis.Success)
+            else:
+                if active_layer.geometryType() == QgsWkbTypes.PointGeometry:
+                    active_layer.removeSelection()
+                    QgsMessageLog.logMessage('Zaznaczenie punktów na warstwie {} zostało wyczyszczone'.format(layer_name), level=Qgis.Success)
+                    iface.messageBar().pushMessage("Wyczyszczono zaznaczenie", 'Zaznaczenie punktów na warstwie {} zostało wyczyszczone'.format(layer_name), level=Qgis.Success)
+                elif active_layer.geometryType() == QgsWkbTypes.PolygonGeometry:
+                    active_layer.removeSelection()
+                    QgsMessageLog.logMessage('Zaznaczenie poligonów na warstwie {} zostało wyczyszczone'.format(layer_name), level=Qgis.Success)
+                    iface.messageBar().pushMessage("Wyczyszczono zaznaczenie", 'Zaznaczenie poligonów na warstwie {} zostało wyczyszczone'.format(layer_name), level=Qgis.Success)
+                else:
+                    QgsMessageLog.logMessage('Zaznaczona warstwa {} nie jest ani warstwą punktową, ani poligonową'.format(layer_name), level=Qgis.Warning)
+        else:
+            QgsMessageLog.logMessage('Nie wybrano żadnej warstwy', level=Qgis.Warning)
+            iface.messageBar().pushMessage("Nie wybrano warstwy", 'Nie wybrano żadnej warstwy', level=Qgis.Warning)
+            
+            
+    def update_area_unit(self):
+        if self.radioButton_m2.isChecked():
+            self.area_unit = 'm2'
+        elif self.radioButton_a.isChecked():
+            self.area_unit = 'a'
+        elif self.radioButton_ha.isChecked():
+            self.area_unit = 'ha'        
+            
     def calculate_dh(self):
         selected_layer = self.mMapLayerComboBox.currentLayer()
-        
+    
         if selected_layer is None:
             msg = QMessageBox()
             msg.setText('Nie wybrano żadnej warstwy')
             msg.setWindowTitle("Brak danych")
             msg.exec_()
-            
-        
-        
+    
         features = selected_layer.selectedFeatures()
-        
+    
         if len(features) != 2:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
             msg.setText('Nie zaznaczono wymaganej ilości punktów.')
             msg.setWindowTitle("Nieprawidłowa ilość danych")
             msg.exec_()
-            
+    
         if len(features) == 2:
             h_1 = float(features[0]['wysokosc'])
             h_2 = float(features[1]['wysokosc'])
-            dh = h_2 - h_1
+            dh = round(h_2 - h_1)
+    
+            # Najpierw ustaw wartość dla label_dh_result
             self.label_dh_result.setText(f'{dh} m')
-            QgsMessageLog.logMessage('Wartość przewyższenia pomiędzy danymi punktami wynosi: {} m'.format(dh), level = Qgis.Success)
-            iface.messageBar().pushMessage('Różnica wysokości','Różnica wysokości została obliczona', level = Qgis.Success)
-            
-        
+    
+
     def calculate_area(self):
         selected_layer = self.mMapLayerComboBox.currentLayer()
         features = selected_layer.selectedFeatures()
@@ -105,64 +164,99 @@ class plugin12_14Dialog(QtWidgets.QDialog, FORM_CLASS):
             x_y = []
             for i in range(0, len(wsp_X)):
                 x_y.append([wsp_X[i], wsp_Y[i]])
-           
+               
             area_0 = 0
             for i in range(len(x_y)):
                 if i == len(x_y)-1:
                     area_0 += (x_y[i][0] + x_y[0][0]) * (x_y[i][1] - x_y[0][1])
                 else: 
                     area_0 += (x_y[i][0] + x_y[i+1][0]) * (x_y[i][1] - x_y[i+1][1])
-            
+                
             area = abs(area_0/2)
-            area = round(area/10000, 3)
-            self.label_area_result.setText(f'{area} ha')
-            QgsMessageLog.logMessage('Pole powierzchni pomiędzy wybranymi punktami wynosi: {} ha'.format(area), level = Qgis.Success)
-            iface.messageBar().pushMessage("Pole powierzchni", 'Pole powierzchni zostało obliczone', level = Qgis.Success)
+            if self.area_unit == 'ha':
+                area = round(area / 10000, 3)
+                self.label_area_result.setText(f'{area} ha')
+            elif self.area_unit == 'a':
+                area = round(area / 100, 3)
+                self.label_area_result.setText(f'{area} a')
+            else:
+                area = round(area, 3)
+                self.label_area_result.setText(f'{area} m2')
+                
+            QgsMessageLog.logMessage(f'Pole powierzchni pomiędzy wybranymi punktami wynosi: {area} {self.area_unit}', level=Qgis.Success)
+            iface.messageBar().pushMessage("Pole powierzchni", 'Pole powierzchni zostało obliczone', level=Qgis.Success)
+            
+            
+    def draw_a_polygon(self):
+        selected_layer = self.mMapLayerComboBox.currentLayer()
+        features = selected_layer.selectedFeatures()
+        wsp_X = []
+        wsp_Y = []
+        for punkty in features:
+            geom = punkty.geometry()
+            x = float(geom.asPoint().x())
+            y = float(geom.asPoint().y())
+            wsp_X.append(x)
+            wsp_Y.append(y)
+        if selected_layer is None:
+            QMessageBox.warning(self, "Nie wybrano żadnej warstwy")
+            return
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        if len(features) < 3:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText('Należy zaznaczyć minimum 3 punkty')
+            msg.setInformativeText("Nieprawidłowa ilość danych")
+            msg.setWindowTitle("Za mało danych")
+            msg.exec_()
+            
+        if len(features) >= 3:
+            x_y = []
+            for i in range(0, len(wsp_X)):
+                x_y.append([wsp_X[i], wsp_Y[i]])
+               
+            area_0 = 0
+            for i in range(len(x_y)):
+                if i == len(x_y)-1:
+                    area_0 += (x_y[i][0] + x_y[0][0]) * (x_y[i][1] - x_y[0][1])
+                else: 
+                    area_0 += (x_y[i][0] + x_y[i+1][0]) * (x_y[i][1] - x_y[i+1][1])
+                
+            area = abs(area_0/2)
+            if self.area_unit == 'ha':
+                area = round(area / 10000, 3)
+                self.label_area_result.setText(f'{area} ha')
+            elif self.area_unit == 'a':
+                area = round(area / 100, 3)
+                self.label_area_result.setText(f'{area} a')
+            else:
+                area = round(area, 3)
+                self.label_area_result.setText(f'{area} m2')
+                
+            QgsMessageLog.logMessage(f'Pole powierzchni pomiędzy wybranymi punktami wynosi: {area} {self.area_unit}', level=Qgis.Success)
+            iface.messageBar().pushMessage("Pole powierzchni", 'Pole powierzchni zostało obliczone', level=Qgis.Success)
+            
+            # Draw a polygon based on the selected points
+            points = [QgsPointXY(x, y) for x, y in zip(wsp_X, wsp_Y)]
+            polygon_geometry = QgsGeometry.fromPolygonXY([points])
+            polygon_feature = QgsFeature()
+            polygon_feature.setGeometry(polygon_geometry)
+            
+            # Create a new memory layer to add the polygon feature
+            polygon_layer = QgsVectorLayer("Polygon?crs=epsg:2180", "Polygon", "memory")
+            attributes = {'area': area}
+            for i, attr in enumerate(attributes.keys()):
+                polygon_layer.dataProvider().addAttributes([QgsField(attr, QVariant.Double)])
+            polygon_layer.updateFields()
+            
+            # Start editing the layer to add the feature
+            polygon_layer.startEditing()
+            polygon_feature.setFields(polygon_layer.fields())
+            polygon_feature.setAttribute('area', area)
+            polygon_layer.dataProvider().addFeatures([polygon_feature])
+            polygon_layer.updateExtents()
+            polygon_layer.commitChanges()
+            
+            # Add the new layer to the map
+            QgsProject.instance().addMapLayer(polygon_layer)
+    
