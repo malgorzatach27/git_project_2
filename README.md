@@ -1,6 +1,6 @@
-<!-- =========================================================
+<!-- 
 ## SPOSÓB DZIAŁANIA:
-=========================================================
+
 
 1. W pierwszej kolejności należy sklonować repozytorium z github do folderu o przykładowej ścieżce "C:\Users\Administrator\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins" i pobrać do niego komendą "git pull" folder z zawartością wszystkich narzędzi do obsługi wtyczki
 2. Uruchomić program Qgis, następnie wejść w zakładkę ''Wtyczki'' na pasku narzędzi, następnie z rozwijalnego paska wybrać opcję ''Zarządzanie wtyczkami''.
@@ -9,15 +9,15 @@
 5. Następnie możemy skorzystać z naszego pluginu klikając w jej ikonę, co spowoduje pojawienia się okna ze wtyczką.
 
 
-=========================================================
+
 ## FUNKCJONALNOŚĆ:
-=========================================================
+
 (należy pamiętać, że w celu skorzystania ze wtyczki musimy mieć w bieżącym projekcie Qgis aktywną warstwę zawierającą pewną liczbę punktów) 
 
 
-=========================================================
+
 ## 1.Obliczanie różnicy wysokości. 
-=========================================================
+
 Funkcja ta pozwala nam  obliczyć różnicę między wysokościami 2 punktów.
 	Aby z niej skorzystać należy:
 	-w rozwijalnym pasku wewnątrz wtyczki, po prawej stronie od nagłówka ''Select layer'' wybrać warstwę z której punkty chcemy analizować
@@ -28,9 +28,9 @@ Funkcja ta pozwala nam  obliczyć różnicę między wysokościami 2 punktów.
 w przypadku zaznaczenia zbyt małej bądź zbyt dużej ilości puktów (innej niż 2), wtyczka nie wykona obliczeń, a zamiast tego zwróci nam stosowny komunikat o niepoprawnej ilości wybranych punktów.
 
 
-==========================================================
+
 ## 2.Obliczanie pól powierzchni.
-=========================================================
+
 Funkcja umożliwia nam obliczenie pola powierzchni poligonu utworzonego z dowolnej liczby punktów, jednak nie mniej niż 3.
 	Aby z niej skorzystać należy:
 	-w rozwijalnym pasku wewnątrz wtyczki, po prawej stronie od nagłówka ''Select layer'' wybrać warstwę z której punkty chcemy analizować
@@ -43,9 +43,9 @@ Funkcja umożliwia nam obliczenie pola powierzchni poligonu utworzonego z dowoln
 w przypadku zaznaczenia zbyt małej ilości punktów (mniejszej niż 3), wtyczka zamiast wykonać obliczenia zwróci nam należyty komunikat o konieczności wyboru przynajmniej 3 punktów.
 
 
-========================================================
+
 ## 3.Rysowanie poligonów 
-========================================================
+
 Funkcja umożliwia nam zobrazowanie poligonu, utworzonego poprzez wybrane wcześniej punkty do obliczenia wartości pola.
 	Aby z niej skorzystać należy:
 	-w rozwijalnym pasku wewnątrz wtyczki, po prawej stronie od nagłówka ''Select layer'' wybrać warstwę zawierającą punkty z których chcemy utworzyć poligon
@@ -54,9 +54,9 @@ Funkcja umożliwia nam zobrazowanie poligonu, utworzonego poprzez wybrane wcześ
 	-zostanie wówczas wygenerowana nowa warstwa z powstałym graficznym przedstawieniem poligonu
 	
 
-=========================================================
+
 ## 4.Wczytywanie danych numerycznych z plików tekstowych
-=========================================================
+
 Funkcja umożliwia nam wczytanie danych (koordynatów x,y) zawartych w plikach tekstowych o formacie .txt / .csv i wyświetlenie ich w tabeli na ekranie naszej wtyczki.
 	Aby z niej skorzystać należy:
 	-przygotować odpowiedni plik tekstowy w formacie (".txt" lub ".csv")
@@ -66,9 +66,9 @@ Funkcja umożliwia nam wczytanie danych (koordynatów x,y) zawartych w plikach t
 	-dane zawarte w pliku zostaną wyświetlone w postaci tabelarycznej w białym oknie znajdującym się w dolnej części interfejsu naszej wtyczki
 	
 
-=========================================================
+
 ## 5.Czyszczenie bieżącego progamu na życzenie użytkownika.
-=========================================================
+
 Funkcja umożliwia użytkownikowi na żądanie czyszczenie konsoli wynikowej, wczytanych danych z plików tesktowych do okna wtyczki oraz zaznaczenia obiektów.
 -aby z niej skorzystać należy w dowolnym momencie użyć przycisku "Clear console and selection" 
 -spowoduje to wyczyszczenie wymienionych powyżej parametryów podczas korzystania z wtyczki 
