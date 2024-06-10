@@ -18,8 +18,8 @@
 1. Obliczanie różnicy wysokości. 
 
 Funkcja ta pozwala nam  obliczyć różnicę między wysokościami 2 punktów.
-	Aby z niej skorzystać należy:
-	- w rozwijalnym pasku wewnątrz wtyczki, po prawej stronie od nagłówka ''Select layer'' wybrać warstwę z której punkty chcemy analizować
+	Aby z niej skorzystać należy: </n>
+	- w rozwijalnym pasku wewnątrz wtyczki, po prawej stronie od nagłówka ''Select layer'' wybrać warstwę z której punkty chcemy analizować </n>
 	- zaznaczyć 2 dowolne punkty na tej samej warstwie
 	- użyć przycisku "Calculate height difference" w oknie wtyczki
 	- obok przycisku pojawi nam się wartość różnicy wysokości między tymi punktami w metrach
