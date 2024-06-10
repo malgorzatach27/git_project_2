@@ -1,4 +1,3 @@
-<!-- 
 ## SPOSÓB DZIAŁANIA:
 
 
@@ -16,7 +15,7 @@
 
 
 
-## 1.Obliczanie różnicy wysokości. 
+1. Obliczanie różnicy wysokości. 
 
 Funkcja ta pozwala nam  obliczyć różnicę między wysokościami 2 punktów.
 	Aby z niej skorzystać należy:
@@ -29,7 +28,7 @@ w przypadku zaznaczenia zbyt małej bądź zbyt dużej ilości puktów (innej ni
 
 
 
-## 2.Obliczanie pól powierzchni.
+2. Obliczanie pól powierzchni.
 
 Funkcja umożliwia nam obliczenie pola powierzchni poligonu utworzonego z dowolnej liczby punktów, jednak nie mniej niż 3.
 	Aby z niej skorzystać należy:
@@ -44,7 +43,7 @@ w przypadku zaznaczenia zbyt małej ilości punktów (mniejszej niż 3), wtyczka
 
 
 
-## 3.Rysowanie poligonów 
+3. Rysowanie poligonów 
 
 Funkcja umożliwia nam zobrazowanie poligonu, utworzonego poprzez wybrane wcześniej punkty do obliczenia wartości pola.
 	Aby z niej skorzystać należy:
@@ -55,7 +54,7 @@ Funkcja umożliwia nam zobrazowanie poligonu, utworzonego poprzez wybrane wcześ
 	
 
 
-## 4.Wczytywanie danych numerycznych z plików tekstowych
+4. Wczytywanie danych numerycznych z plików tekstowych
 
 Funkcja umożliwia nam wczytanie danych (koordynatów x,y) zawartych w plikach tekstowych o formacie .txt / .csv i wyświetlenie ich w tabeli na ekranie naszej wtyczki.
 	Aby z niej skorzystać należy:
@@ -67,7 +66,7 @@ Funkcja umożliwia nam wczytanie danych (koordynatów x,y) zawartych w plikach t
 	
 
 
-## 5.Czyszczenie bieżącego progamu na życzenie użytkownika.
+5. Czyszczenie bieżącego progamu na życzenie użytkownika.
 
 Funkcja umożliwia użytkownikowi na żądanie czyszczenie konsoli wynikowej, wczytanych danych z plików tesktowych do okna wtyczki oraz zaznaczenia obiektów.
 -aby z niej skorzystać należy w dowolnym momencie użyć przycisku "Clear console and selection" 
