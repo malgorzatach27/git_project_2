@@ -1,4 +1,3 @@
-Małgosia Chodowiec
 ## SPOSÓB DZIAŁANIA:
 
 
